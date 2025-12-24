@@ -1,11 +1,9 @@
 package com.filesearcher;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class FileSearchWorker {
 
@@ -17,69 +15,56 @@ public class FileSearchWorker {
             return results;
         }
 
-        searchInDirectory(directory, settings, results);
+        searchInDirectory(directory, settings, results, settings.isRecursive());
         return results;
     }
 
     private void searchInDirectory(File directory, SearchSettings settings,
-                                   List<String> results) {
+                                   List<String> results, boolean recursive) {
         File[] files = directory.listFiles();
         if (files == null) return;
 
-        String searchPattern = prepareSearchPattern(settings);
-
         for (File file : files) {
             if (file.isDirectory()) {
-                searchInDirectory(file, settings, results);
-            } else {
-                if (matches(file.getName(), searchPattern, settings)) {
-                    results.add(file.getAbsolutePath());
+                if (recursive) {
+                    searchInDirectory(file, settings, results, true);
                 }
-                else if (isTextFile(file) && containsInFile(file, searchPattern, settings)) {
-                    results.add(file.getAbsolutePath() + " (содержит в тексте)");
+            } else {
+                if (matches(file.getName(), settings.getSearchWord(), settings)) {
+                    results.add(file.getAbsolutePath());
+                    continue;
+                }
+
+                if (isTextFile(file) && containsInFile(file, settings.getSearchWord(), settings)) {
+                    results.add(file.getAbsolutePath() + " (" + getContainsTextLabel() + ")");
                 }
             }
         }
     }
 
-    private String prepareSearchPattern(SearchSettings settings) {
-        String word = settings.getSearchWord();
-
-        if (settings.isIgnoreSpaces()) {
-            word = word.replaceAll("\\s+", "");
+    private String getContainsTextLabel() {
+        if ("en".equals(LanguageManager.getCurrentLanguage())) {
+            return "contains in text";
+        } else {
+            return "содержит в тексте";
         }
-
-        if (!settings.isCaseSensitive()) {
-            word = word.toLowerCase();
-        }
-
-        if (settings.isWholeWord()) {
-            word = Pattern.quote(word);
-            return "\\b" + word + "\\b";
-        }
-
-        return Pattern.quote(word);
     }
 
-    private boolean matches(String text, String pattern, SearchSettings settings) {
+    private boolean matches(String text, String searchWord, SearchSettings settings) {
         String processedText = text;
-
-        if (settings.isIgnoreSpaces()) {
-            processedText = processedText.replaceAll("\\s+", "");
-        }
+        String processedSearchWord = searchWord;
 
         if (!settings.isCaseSensitive()) {
             processedText = processedText.toLowerCase();
+            processedSearchWord = processedSearchWord.toLowerCase();
         }
 
-        Pattern p;
         if (settings.isWholeWord()) {
-            p = Pattern.compile(pattern);
+            String wordBoundary = "\\b";
+            return processedText.matches(".*" + wordBoundary + processedSearchWord + wordBoundary + ".*");
         } else {
-            p = Pattern.compile(pattern, Pattern.LITERAL);
+            return processedText.contains(processedSearchWord);
         }
-
-        return p.matcher(processedText).find();
     }
 
     private boolean isTextFile(File file) {
@@ -87,14 +72,30 @@ public class FileSearchWorker {
         return name.endsWith(".txt") || name.endsWith(".java") ||
                 name.endsWith(".xml") || name.endsWith(".json") ||
                 name.endsWith(".html") || name.endsWith(".css") ||
-                name.endsWith(".js") || name.endsWith(".properties");
+                name.endsWith(".js") || name.endsWith(".properties") ||
+                name.endsWith(".md") || name.endsWith(".cfg") ||
+                name.endsWith(".ini") || name.endsWith(".csv") ||
+                name.endsWith(".log") || name.endsWith(".yml") ||
+                name.endsWith(".yaml");
     }
 
-    private boolean containsInFile(File file, String pattern, SearchSettings settings) {
+    private boolean containsInFile(File file, String searchWord, SearchSettings settings) {
         try {
-            String content = new String(Files.readAllBytes(file.toPath()));
-            return matches(content, pattern, settings);
-        } catch (IOException e) {
+            if (file.length() > 10 * 1024 * 1024) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (matches(line, searchWord, settings)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            } else {
+                String content = new String(Files.readAllBytes(file.toPath()));
+                return matches(content, searchWord, settings);
+            }
+        } catch (Exception e) {
             return false;
         }
     }

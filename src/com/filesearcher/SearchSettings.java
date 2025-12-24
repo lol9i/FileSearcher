@@ -4,14 +4,14 @@ public class SearchSettings {
     private String searchWord;
     private boolean caseSensitive;
     private boolean wholeWord;
-    private boolean ignoreSpaces;
+    private boolean recursive;
 
     public SearchSettings(String searchWord, boolean caseSensitive,
-                          boolean wholeWord, boolean ignoreSpaces) {
+                          boolean wholeWord, boolean recursive) {
         this.searchWord = searchWord;
         this.caseSensitive = caseSensitive;
         this.wholeWord = wholeWord;
-        this.ignoreSpaces = ignoreSpaces;
+        this.recursive = recursive;
     }
 
     public String getSearchWord() { return searchWord; }
@@ -23,6 +23,6 @@ public class SearchSettings {
     public boolean isWholeWord() { return wholeWord; }
     public void setWholeWord(boolean wholeWord) { this.wholeWord = wholeWord; }
 
-    public boolean isIgnoreSpaces() { return ignoreSpaces; }
-    public void setIgnoreSpaces(boolean ignoreSpaces) { this.ignoreSpaces = ignoreSpaces; }
+    public boolean isRecursive() { return recursive; }
+    public void setRecursive(boolean recursive) { this.recursive = recursive; }
 }

@@ -18,7 +18,7 @@ public class LanguageManager {
             case "word": return "Слово для поиска:";
             case "case_sensitive": return "Учитывать регистр";
             case "whole_word": return "Целое слово";
-            case "ignore_spaces": return "Игнорировать пробелы";
+            case "recursive": return "Углубляться (рекурсивно)";
             case "language": return "Язык:";
             case "browse": return "Обзор...";
             case "search": return "Начать поиск";
@@ -32,6 +32,7 @@ public class LanguageManager {
             case "search_settings": return "Настройки поиска";
             case "search_results": return "Результаты поиска";
             case "not_folder": return "Папка не существует или указан файл!";
+            case "contains_in_text": return "содержит в тексте";
             default: return key;
         }
     }
@@ -43,7 +44,7 @@ public class LanguageManager {
             case "word": return "Search word:";
             case "case_sensitive": return "Case sensitive";
             case "whole_word": return "Whole word";
-            case "ignore_spaces": return "Ignore spaces";
+            case "recursive": return "Recursive (deep search)";
             case "language": return "Language:";
             case "browse": return "Browse...";
             case "search": return "Start Search";
@@ -57,6 +58,7 @@ public class LanguageManager {
             case "search_settings": return "Search Settings";
             case "search_results": return "Search Results";
             case "not_folder": return "Folder doesn't exist or is not a directory!";
+            case "contains_in_text": return "contains in text";
             default: return key;
         }
     }

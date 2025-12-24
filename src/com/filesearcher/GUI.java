@@ -11,7 +11,7 @@ public class GUI extends JFrame {
     private JTextField searchField;
     private JCheckBox caseSensitiveCheck;
     private JCheckBox wholeWordCheck;
-    private JCheckBox ignoreSpacesCheck;
+    private JCheckBox recursiveCheck;
     private JTextArea resultArea;
     private JComboBox<String> languageCombo;
     private JButton searchButton;
@@ -73,9 +73,10 @@ public class GUI extends JFrame {
         wholeWordCheck.setName("whole_check");
         checkboxesPanel.add(wholeWordCheck);
 
-        ignoreSpacesCheck = new JCheckBox();
-        ignoreSpacesCheck.setName("ignore_check");
-        checkboxesPanel.add(ignoreSpacesCheck);
+        recursiveCheck = new JCheckBox();
+        recursiveCheck.setName("recursive_check");
+        recursiveCheck.setSelected(true);
+        checkboxesPanel.add(recursiveCheck);
         settingsPanel.add(checkboxesPanel);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
@@ -139,15 +140,12 @@ public class GUI extends JFrame {
             searchButton.setForeground(Color.BLACK);
 
         } catch (Exception e) {
-
         }
     }
 
     private void updateUITexts() {
         setTitle(LanguageManager.getString("title"));
-
         updateComponentTexts(this.getContentPane());
-
         searchButton.setForeground(Color.BLACK);
     }
 
@@ -192,7 +190,7 @@ public class GUI extends JFrame {
                     switch (name) {
                         case "case_check": checkBox.setText(LanguageManager.getString("case_sensitive")); break;
                         case "whole_check": checkBox.setText(LanguageManager.getString("whole_word")); break;
-                        case "ignore_check": checkBox.setText(LanguageManager.getString("ignore_spaces")); break;
+                        case "recursive_check": checkBox.setText(LanguageManager.getString("recursive")); break;
                     }
                 }
             } else if (comp instanceof Container) {
@@ -247,7 +245,7 @@ public class GUI extends JFrame {
                 searchWord,
                 caseSensitiveCheck.isSelected(),
                 wholeWordCheck.isSelected(),
-                ignoreSpacesCheck.isSelected()
+                recursiveCheck.isSelected()
         );
 
         statusLabel.setText(LanguageManager.getString("searching") + "...");
@@ -272,7 +270,7 @@ public class GUI extends JFrame {
                     } else {
                         StringBuilder sb = new StringBuilder();
                         for (String result : results) {
-                            sb.append("• ").append(result).append("\n\n");
+                            sb.append("• ").append(result).append("\n");
                         }
                         sb.append("\n════════════════════════════════════════\n");
                         sb.append(LanguageManager.getString("files_found")).append(": ").append(results.size());

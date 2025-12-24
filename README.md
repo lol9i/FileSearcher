@@ -1,6 +1,6 @@
 
-## File Searcher 1.0
-FileSearcher is a simple program that helps you find a given word within a file or in its name (it works only with certain file types).
+## File Searcher 2.0
+A desktop application for searching files by name and content with advanced filtering options.
 
 ### System Requirements
 * Java 8 or higher
@@ -17,6 +17,4 @@ FileSearcher is a simple program that helps you find a given word within a file 
 * **1** Download FileSearcher.jar
 * **2** Double-click the file
 * **3** If prompted, select "Open with Java(TM) Platform SE Binary"
-
-
 
